@@ -1,0 +1,49 @@
+@import "tailwindcss";
+
+
+
+
+/* Ticker keyframes: translate full width of content */
+@keyframes ticker-scroll {
+  0%   { transform: translateX(0); }
+  100% { transform: translateX(-50%); } /* content duplicated, move half */
+}
+
+/* Track container that animates */
+.ticker-track {
+  display: inline-block;
+  /* The duration is computed from --ticker-speed and content width via CSS calc.
+     We'll set a default fallback duration (20s) but we mostly control speed via JS variable. */
+  animation-name: ticker-scroll;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+
+  /* We'll compute duration dynamically:
+     duration = (contentWidth / speed) seconds.
+     Because pure CSS can't measure contentWidth here, we'll approximate with CSS var:
+     We'll use a CSS trick: set animation-duration using --ticker-duration if available,
+     otherwise fallback to 20s.
+  */
+  animation-duration: calc(var(--ticker-duration, 20s));
+}
+
+/* Ensure the ticker content doesn't wrap and duplicates visually */
+.ticker-content {
+  display: inline-block;
+  padding-right: 2rem;
+  /* Duplicate visually (we duplicated text in JS) */
+}
+
+/* Pause animation when user hovers or when reduced motion is preferred */
+.ticker-track:hover,
+.ticker-track:focus {
+  animation-play-state: paused;
+}
+
+/* Respect prefers-reduced-motion */
+@media (prefers-reduced-motion: reduce) {
+  .ticker-track {
+    animation: none;
+    transform: none;
+  }
+}
